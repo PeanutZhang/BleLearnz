@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+  <LinearLayout
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+      <TextView
+          android:id="@+id/device_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textSize="24sp"/>
+
+      <GridLayout
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:columnCount="2">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="MAC:"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/device_address"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textSize="12sp"
+              android:typeface="monospace"/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="updated:"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/device_last_update"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="RSSI"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/device_rssi"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+      </GridLayout>
+      <GridLayout
+          android:id="@+id/ibeacon_section"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:background="#f3f3f3"
+          android:columnCount="4">
+
+          <!-- ROW 1 -->
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="uuid:"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/ibeacon_uuid"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_columnSpan="3"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+
+          <!-- ROW 2 -->
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="major:"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/ibeacon_major"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingLeft="5dp"
+              android:paddingRight="5dp"
+              android:text="minor"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/ibeacon_minor"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+
+          <!-- ROW 3 -->
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="txpower"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/ibeacon_tx_power"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingLeft="5dp"
+              android:paddingRight="5dp"
+              android:text="distance"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/ibeacon_distance"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+
+          <!-- ROW 4 -->
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingRight="5dp"
+              android:text="descriptor"
+              android:textSize="12sp"
+              android:textStyle="bold"/>
+
+          <TextView
+              android:id="@+id/ibeacon_distance_descriptor"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_columnSpan="3"
+              android:paddingRight="5dp"
+              android:textSize="12sp"/>
+      </GridLayout>
+
+  </LinearLayout>
+</LinearLayout>
