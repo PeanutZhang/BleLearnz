@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<item android:id="@+id/menu_bt1"
+    android:title="分析数据"
+    app:showAsAction="ifRoom|withText"
+    />
+ <item android:id="@+id/menu_bt_connect"
+       android:title="连接"
+       app:showAsAction="ifRoom|withText"/>
+</menu>

@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -108,6 +109,16 @@ public class Start1Activity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recylerView.setLayoutManager(layoutManager);
         recylerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new DevicesAdapter.onItemClickListener() {
+            @Override
+            public void onItemClickListener(BleScanBean scanResul) {
+                Intent it = new Intent(Start1Activity.this,ScanResutDetialActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("scanResult",scanResul);
+                it.putExtra("bundle",bundle);
+               Start1Activity.this.startActivity(it);
+            }
+        });
     }
 
 

@@ -10,9 +10,9 @@ import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
     protected ListView lv;
-    private String[] titles = {"ble入门 "};
+    private String[] titles = {"ble入门 ","expandlistview"};
     private Class[] acts = {
-            Start1Activity.class
+            Start1Activity.class,ExpandViewActivity.class
     };
 
     @Override
