@@ -1,13 +1,16 @@
-package com.ezparking.com.blelearn.eneity;
+package com.ezparking.com.blelearn.ibeaconutil;
 
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 
+import com.ezparking.com.blelearn.R;
+
 import java.util.List;
 
 
-/*package*/ public class Exporter {
+/*package*/
+public class Exporter {
     private final Context mContext;
 
     public Exporter(final Context context) {
@@ -18,8 +21,8 @@ import java.util.List;
                                        final String deviceAddress,
                                        final List<BluetoothGattService> gattServices) {
 
-        final String unknownServiceString = "Unknown service";
-        final String unknownCharaString = "Unknown characteristic";
+        final String unknownServiceString = mContext.getString(R.string.unknown_service);
+        final String unknownCharaString = mContext.getString(R.string.unknown_characteristic);
         final StringBuilder exportBuilder = new StringBuilder();
 
         exportBuilder.append("Device Name: ");
@@ -38,7 +41,7 @@ import java.util.List;
         for (final BluetoothGattService gattService : gattServices) {
             uuid = gattService.getUuid().toString();
 
-//            exportBuilder.append(GattAttributeResolver.getAttributeName(uuid, unknownServiceString));
+            exportBuilder.append(GattAttributeResolver.getAttributeName(uuid, unknownServiceString));
             exportBuilder.append(" (");
             exportBuilder.append(uuid);
             exportBuilder.append(')');
@@ -49,7 +52,7 @@ import java.util.List;
                 uuid = gattCharacteristic.getUuid().toString();
 
                 exportBuilder.append('\t');
-//                exportBuilder.append(GattAttributeResolver.getAttributeName(uuid, unknownCharaString));
+                exportBuilder.append(GattAttributeResolver.getAttributeName(uuid, unknownCharaString));
                 exportBuilder.append(" (");
                 exportBuilder.append(uuid);
                 exportBuilder.append(')');

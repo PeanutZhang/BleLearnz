@@ -69,8 +69,21 @@ public class BleConnectService extends Service {
         if(mBluetoothAdapter== null) return false;
         return true;
     }
+    public void readCharacteristic(final BluetoothGattCharacteristic characteristic) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.e(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+        mBluetoothGatt.readCharacteristic(characteristic);
+    }
 
-
+    public void setCharacteristicNotification(final BluetoothGattCharacteristic characteristic, final boolean enabled) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.e(TAG, "BluetoothAdapter not initialized");
+            return;
+        }
+        mBluetoothGatt.setCharacteristicNotification(characteristic, enabled);
+    }
 
   public boolean connectDevice( final String address){
             boolean connectSucess = false;

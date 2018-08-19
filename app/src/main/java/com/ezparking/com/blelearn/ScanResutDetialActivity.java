@@ -1,6 +1,8 @@
 package com.ezparking.com.blelearn;
 
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,15 +11,20 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.ezparking.com.blelearn.ibeaconutil.ByteUtils;
+import com.ezparking.com.blelearn.ibeaconutil.GattAttributeResolver;
+import com.ezparking.com.blelearn.ibeaconutil.GattDataAdapterFactory;
 import com.ezparking.com.blelearn.services.BleConnectService;
+
+import java.util.List;
 
 import static com.ezparking.com.blelearn.services.BleConnectService.*;
 
@@ -34,6 +41,11 @@ public class ScanResutDetialActivity extends AppCompatActivity {
     private BleConnectService mBleConnectService;
     private BluetoothDevice mBleDevice;
     private State mCurrentState = State.DISCONNECTED;
+    private String mExportString;
+    private com.ezparking.com.blelearn.eneity.Exporter mExporter;
+    private BluetoothGattCharacteristic mNotifyCharacteristic;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,22 +119,34 @@ public class ScanResutDetialActivity extends AppCompatActivity {
 
 
             }else if (BleConnectService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)){
-
+               displayGattServices(  mBleConnectService.getSupportedGattServices());
 
             } else if (BleConnectService.ACTION_GATT_DISCONNECTED.equals(action)) {
               updateConnectionState(State.DISCONNECTED);
                 invalidateOptionsMenu();
 
             }else if(BleConnectService.ACTION_DATA_AVAILABLE.equals(action)){
+                final String noData = "无数据";
+                final String suuid = intent.getStringExtra(BleConnectService.EXTRA_UUID_CHAR);
+                final byte[] dataArr = intent.getByteArrayExtra(BleConnectService.EXTRA_DATA_RAW);
 
+                uuid.setText(tryString(suuid, noData));
+               description.setText(GattAttributeResolver.getAttributeName(suuid, getString(R.string.unknown)));
+                dataAsArray.setText(ByteUtils.byteArrayToHexString(dataArr));
+                dataAsString.setText(new String(dataArr));
             }
-
 
 
         }
     };
 
-
+    private static String tryString(final String string, final String fallback) {
+        if (string == null) {
+            return fallback;
+        } else {
+            return string;
+        }
+    }
 
     private void updateConnectionState(final State state) {
         mCurrentState = state;
@@ -130,7 +154,6 @@ public class ScanResutDetialActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                final int colourId;
                 final int resId;
 
                 switch (state) {
@@ -144,7 +167,6 @@ public class ScanResutDetialActivity extends AppCompatActivity {
                         resId = R.string.connecting;
                         break;
                     default:
-                        colourId = android.R.color.black;
                         resId = 0;
                         break;
                 }
@@ -240,6 +262,48 @@ public class ScanResutDetialActivity extends AppCompatActivity {
         dataAsString = (TextView) findViewById(R.id.data_as_string);
         dataAsArray = (TextView) findViewById(R.id.data_as_array);
         gattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
+
+        gattServicesList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                final GattDataAdapterFactory.GattDataAdapter adapter =
+                        (GattDataAdapterFactory.GattDataAdapter) parent.getExpandableListAdapter();
+
+                final BluetoothGattCharacteristic characteristic =
+                        adapter.getBluetoothGattCharacteristic(groupPosition, childPosition);
+
+                final int charaProp = characteristic.getProperties();
+                if ((charaProp | BluetoothGattCharacteristic.PROPERTY_READ) > 0) {
+                    // If there is an active notification on a characteristic, clear
+                    // it first so it doesn't update the data field on the user interface.
+                    if (mNotifyCharacteristic != null) {
+                        mBleConnectService.setCharacteristicNotification(mNotifyCharacteristic, false);
+                        mNotifyCharacteristic = null;
+                    }
+                    mBleConnectService.readCharacteristic(characteristic);
+                }
+                if ((charaProp | BluetoothGattCharacteristic.PROPERTY_NOTIFY) > 0) {
+                    mNotifyCharacteristic = characteristic;
+                    mBleConnectService.setCharacteristicNotification(characteristic, true);
+                }
+
+                return true;
+            }
+        });
+
+    }
+
+
+    private void displayGattServices(final List<BluetoothGattService> gattServices) {
+        if (gattServices == null) return;
+        mExportString = mExporter.generateExportString(
+                mBleDevice.getName(),
+                mBleDevice.getAddress(),
+                gattServices);
+
+        final GattDataAdapterFactory.GattDataAdapter adapter = GattDataAdapterFactory.createAdapter(this, gattServices);
+        gattServicesList.setAdapter(adapter);
+        invalidateOptionsMenu();
     }
 
     enum State{
