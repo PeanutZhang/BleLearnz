@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
@@ -14,6 +15,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
+
+import java.util.List;
 
 public class BleConnectService extends Service {
 
@@ -29,13 +32,13 @@ public class BleConnectService extends Service {
     public final static String ACTION_DATA_AVAILABLE = BleConnectService.class.getName() + ".ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA_RAW = BleConnectService.class.getName() + ".EXTRA_DATA_RAW";
     public final static String EXTRA_UUID_CHAR = BleConnectService.class.getName() + ".EXTRA_UUID_CHAR";
-    private final static String TAG = BleConnectService.class.getSimpleName();
+    private final static String TAG = "zyh bleconnectservice";
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
     private BluetoothGatt mBluetoothGatt;
     private String mDeviceAddress;
-    private State mConnectionState;
+    private State mConnectionState = State.DISCONNECTED;
 
 
     public BleConnectService() {
@@ -73,23 +76,27 @@ public class BleConnectService extends Service {
             boolean connectSucess = false;
          if(mBluetoothAdapter == null || TextUtils.isEmpty(address))return false;
         if (!TextUtils.isEmpty(mDeviceAddress) && mBluetoothGatt !=null && mDeviceAddress.equals(address)){
+            Log.e(TAG, "Trying to use an existing mBluetoothGatt for connection.");
             if(mBluetoothGatt.connect()){
-                 connectSucess = true;
-                 setConnectState(State.CONNECTED,true);
+                connectSucess = true;
+                Log.d(TAG, "Connection CONECTTING attempt OK.");
+                setConnectState(State.CONECTTING,true);
+
             }else {
                  connectSucess = false;
-                 setConnectState(State.DISCONNECTED,true);
+                Log.d(TAG, "Connection CONECTTING attempt failed.");
+                setConnectState(State.DISCONNECTED,true);
             }
         }else {
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
             if(device ==null){
                 connectSucess = false;
             }else {
-
+                Log.e(TAG, "Trying to create a new connection.");
                 mBluetoothGatt = device.connectGatt(this,false,gattCallback);
-
+                mDeviceAddress = address;
+                setConnectState(State.CONECTTING,true);
             }
-
 
 
         }
@@ -103,7 +110,7 @@ public class BleConnectService extends Service {
    private void updateBroadcast(String action,BluetoothGattCharacteristic characteristic){
          Intent intent = new Intent(action);
        String characteristicUuid = characteristic.getUuid().toString();
-       intent.putExtra(EXTRA_UUID_CHAR,characteristic);
+       intent.putExtra(EXTRA_UUID_CHAR,characteristicUuid);
        byte[] value = characteristic.getValue();
        intent.putExtra(EXTRA_DATA_RAW,value);
        sendBroadcast(intent);
@@ -179,6 +186,20 @@ public class BleConnectService extends Service {
              sendBroadcast(it);
           }
 
+    }
+
+
+    public List<BluetoothGattService> getSupportedGattServices() {
+        if (mBluetoothGatt == null) return null;
+
+        return mBluetoothGatt.getServices();
+    }
+    public void disconnect(){
+        if(mBluetoothAdapter !=null || mBluetoothGatt !=null){
+            mBluetoothGatt.disconnect();
+            mBluetoothGatt =null;
+            Log.e("zyh"," mBluetoothGatt.disconnect is going");
+        }
     }
 
     enum State{

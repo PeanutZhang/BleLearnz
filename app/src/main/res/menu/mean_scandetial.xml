@@ -8,4 +8,10 @@
  <item android:id="@+id/menu_bt_connect"
        android:title="连接"
        app:showAsAction="ifRoom|withText"/>
+ <item android:id="@+id/menu_bt_disconnect"
+     android:title="断开连接"
+     app:showAsAction="ifRoom|withText"/>
+ <item android:id="@+id/menu_refreshing"
+     android:title=""
+     app:showAsAction="ifRoom|withText"/>
 </menu>
